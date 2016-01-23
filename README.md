@@ -1,7 +1,7 @@
 ![Bouncing Ship](https://raw.githubusercontent.com/flipcoder/bouncingship/master/bin/mods/bouncingship/data/title.png)
 ======
 
-Skyroads clone written in C++11 for a speedhacking practice run.
+Skyroads-inspired game written in C++11 for a speedhacking practice run.
 
 Graphics and other resources were created very quickly and are mostly temporary.
 
