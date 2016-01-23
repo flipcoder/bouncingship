@@ -208,12 +208,12 @@ void GameState :: logic(Freq::Time t)
     glm::vec3 v = Physics::fromBulletVector(ship_body->getLinearVelocity());
     
     if(m_pInput->key(SDLK_e))
-        v.z -= 10.0f * t.s();
+        v.z -= 15.0f * t.s();
     //    v.z -= 50.0f * t.s();
     //    //m_pShip->acceleration(glm::vec3(0.0f, 0.0f, 0.1f));
     //    //v.z = -5.0f;
     else if(m_pInput->key(SDLK_d))
-        v.z += 10.0f * t.s();
+        v.z += 15.0f * t.s();
     //    v.z += 50.0f * t.s();
     //    //v.z = 5.0f;
     ////else
@@ -221,9 +221,11 @@ void GameState :: logic(Freq::Time t)
     //v.z = std::min<float>(0.0f, std::max<float>(-25.0f, v.z));
 
     if(m_pInput->key(SDLK_s))
-        v.x -= 7.0 * t.s();
-    if(m_pInput->key(SDLK_f))
-        v.x += 7.0 * t.s();
+        v.x = -7.0f;
+    else if(m_pInput->key(SDLK_f))
+        v.x = 7.0f;
+    else
+        v.x = 0.0f;
 
     if(m_pInput->key(SDLK_SPACE))
         v.y = 5.0f;
