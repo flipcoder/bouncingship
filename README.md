@@ -1,4 +1,4 @@
-Bouncing Ship
+![Bouncing Ship](https://raw.githubusercontent.com/flipcoder/bouncingship/master/bin/mods/bouncingship/data/title.png)
 ======
 
 Skyroads clone written in C++11.
