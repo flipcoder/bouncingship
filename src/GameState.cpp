@@ -40,6 +40,7 @@ GameState :: GameState(
 void GameState :: preload()
 {
     m_pCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
+    m_pCamera->fov(100);
     m_pOrthoCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
     m_pRoot->add(m_pCamera->as_node());
     m_pOrthoRoot->add(m_pOrthoCamera->as_node());
@@ -54,6 +55,7 @@ void GameState :: preload()
     //    m_pCamera
     //);
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
+    m_pPhysics->world()->setGravity(btVector3(0.0, -20.0, 0.0));
     
     //m_pRoot->add(make_shared<Mesh>(
     //    m_pQor->resource_path("level_silentScalpels.obj"),
@@ -91,7 +93,6 @@ void GameState :: preload()
     m_pShip->mass(1.0f);
     m_pShip->rotate(0.5f, glm::vec3(0.0f, 1.0f, 0.0f));
     m_pShip->position(glm::vec3(0.0f, 10.0f, 0.0f));
-    LOGf("ship children: %s", m_pShip->num_children());
     m_pRoot->add(m_pShip);
 
     auto m = make_shared<Mesh>(
@@ -207,12 +208,12 @@ void GameState :: logic(Freq::Time t)
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     glm::vec3 v = Physics::fromBulletVector(ship_body->getLinearVelocity());
     
-    if(m_pInput->key(SDLK_e))
+    if(m_pController->button("accelerate"))
         v.z -= 15.0f * t.s();
     //    v.z -= 50.0f * t.s();
     //    //m_pShip->acceleration(glm::vec3(0.0f, 0.0f, 0.1f));
     //    //v.z = -5.0f;
-    else if(m_pInput->key(SDLK_d))
+    else if(m_pController->button("decelerate"))
         v.z += 15.0f * t.s();
     //    v.z += 50.0f * t.s();
     //    //v.z = 5.0f;
@@ -220,15 +221,15 @@ void GameState :: logic(Freq::Time t)
     //    //m_pShip->acceleration(glm::vec3(0.0f));
     //v.z = std::min<float>(0.0f, std::max<float>(-25.0f, v.z));
 
-    if(m_pInput->key(SDLK_s))
+    if(m_pController->button("left"))
         v.x = -7.0f;
-    else if(m_pInput->key(SDLK_f))
+    else if(m_pController->button("right"))
         v.x = 7.0f;
     else
         v.x = 0.0f;
 
-    if(m_pInput->key(SDLK_SPACE))
-        v.y = 5.0f;
+    if(m_pController->button("jump"))
+        v.y = 10.0f;
         //rb->setLinearVelocity(btVector3(0.0, 5.0, 0.0));
     //    v.y = 10.0f;
     //else if(m_pShip->position().y > 0.0f)
@@ -237,6 +238,9 @@ void GameState :: logic(Freq::Time t)
     ////    v.y = -10.0f;
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
+    m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
+    if(m_pShip->position().y < -20.0f)
+        m_pQor->change_state("game");
     //m_pShip->velocity(v);
     
     //if(m_pInput->key(SDLK_UP))

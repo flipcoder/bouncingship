@@ -1,0 +1,1 @@
+clang ccache premake4 glew sdl2 devil freealut libvorbis libogg boost jsoncpp bullet cairo pango
