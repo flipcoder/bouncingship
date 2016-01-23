@@ -1,0 +1,21 @@
+{
+    "name": "Player",
+    "input": {
+        "binds": {
+            "e": [
+                "accelerate",
+                "up"
+            ],
+            "d": [
+                "decelerate",
+                "down"
+            ],
+            "s": "left",
+            "f": "right",
+            "space": [
+                "jump",
+                "select"
+            ]
+        }
+    }
+}

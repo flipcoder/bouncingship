@@ -1,0 +1,57 @@
+# Blender MTL File: 'quickship.blend'
+# Material Count: 5
+
+newmtl ShipShine
+Ns 262.745098
+Ka 1.000000 1.000000 1.000000
+Kd 0.205309 0.387625 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd H:\Work\quickship-texture.png
+
+newmtl burner
+Ns 366.666667
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.007440 0.004985
+Ks 1.000000 0.598955 0.000000
+Ke 1.600000 0.018600 0.012463
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd H:\Work\quickship-texture.png
+
+newmtl cockpitMetal
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.220257 0.220257 0.220257
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd H:\Work\quickship-texture.png
+
+newmtl glass
+Ns 27.450980
+Ka 0.536842 0.536842 0.536842
+Kd 0.041016 0.551531 0.640000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 3
+map_Kd H:\Work\quickship-texture.png
+
+newmtl white
+Ns 5.882353
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd H:\Work\quickship-texture.png
