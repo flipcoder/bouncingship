@@ -3,7 +3,7 @@
         "resolution": "1920x1080",
         "windowed": true,
         "vsync": false,
-        "AA": 16,
+        "AA": 8,
         "anisotropy": 16
     },
     "audio": {

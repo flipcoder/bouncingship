@@ -64,11 +64,11 @@ void GameState :: preload()
     bg->add_modifier(make_shared<Wrap>(Prefab::quad_wrap()));
     bg->material(make_shared<MeshMaterial>(
         m_pQor->resources()->cache_as<ITexture>(
-            "sky1.png"
+            "sky2.png"
         )
     ));
     bg->position(glm::vec3(win->center().x, win->center().y, 0.0f));
-    m_pOrthoRoot->add(bg);
+    //m_pOrthoRoot->add(bg);
     
     m_pShip = m_pQor->make<Mesh>("quickship.obj");
     m_pShip->set_physics(Node::DYNAMIC);
@@ -89,6 +89,8 @@ void GameState :: preload()
 
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     ship_body->setFriction(0.0);
+    ship_body->setCcdMotionThreshold(1.0f);
+    ship_body->setCcdSweptSphereRadius(0.2f);
 }
 
 GameState :: ~GameState()

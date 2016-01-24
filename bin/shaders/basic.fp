@@ -3,16 +3,15 @@
 /*varying vec3 VertexPosition;*/
 varying vec3 Position;
 varying vec2 Wrap;
+varying vec3 ScreenPos;
 /*varying vec2 Normal;*/
+/*varying vec4 vLightAmbient;*/
+uniform vec4 LightAmbient;
+uniform vec4 MaterialAmbient;
+uniform vec4 MaterialDiffuse;
+uniform vec4 MaterialSpecular;
 
 uniform sampler2D Texture;
-uniform vec4 LightAmbient = vec4(1, 1, 1, 1);
-
-// This color key stuff could be done on the CPU, and using a separate tex
-/*uniform vec4 ColorKeyLow;*/
-/*uniform vec4 ColorKeyHigh;*/
-/*uniform vec4 ColorReplaceLow;*/
-/*uniform vec4 ColorReplaceHigh;*/
 
 #define M_PI 3.1415926535897932384626433832795
 #define M_TAU (M_PI * 2.0)
@@ -43,6 +42,7 @@ float avg(vec3 c)
 void main()
 {
     vec4 color = texture2D(Texture, Wrap);
+    /*vec4 color = MaterialDiffuse;*/
     float e = 0.1; // threshold
     if(floatcmp(color.r, 1.0, e) &&
         floatcmp(color.g, 0.0, e) &&
@@ -54,6 +54,6 @@ void main()
         discard;
     }
     
-    gl_FragColor = color * LightAmbient;
+    gl_FragColor = MaterialDiffuse;
 }
 
