@@ -45,8 +45,8 @@ void GameState :: preload()
     m_pRoot->add(m_pCamera->as_node());
     m_pOrthoRoot->add(m_pOrthoCamera->as_node());
     
-    m_pMusic = m_pQor->make<Sound>("1.ogg");
-    m_pRoot->add(m_pMusic);
+    //m_pMusic = m_pQor->make<Sound>("1.ogg");
+    //m_pRoot->add(m_pMusic);
     
     //m_pPipeline = make_shared<Pipeline>(
     //    m_pQor->window(),
@@ -55,7 +55,7 @@ void GameState :: preload()
     //    m_pCamera
     //);
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
-    m_pPhysics->world()->setGravity(btVector3(0.0, -20.0, 0.0));
+    m_pPhysics->world()->setGravity(btVector3(0.0, -30.0, 0.0));
     
     //m_pRoot->add(make_shared<Mesh>(
     //    m_pQor->resource_path("level_silentScalpels.obj"),
@@ -136,7 +136,7 @@ void GameState :: enter()
     m_pCamera->track(m_pShip);
     m_pOrthoCamera->ortho();
     
-    m_pMusic->play();
+    //m_pMusic->play();
 
     //m_pScene = make_shared<Scene>(
     //    m_pQor->resource_path("level_tantrum2013.json"),
