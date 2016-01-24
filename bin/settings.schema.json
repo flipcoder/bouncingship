@@ -7,17 +7,22 @@
         "windowed": {
             ".name": "Window",
             ".desc": "Play in windowed or fullscreen mode",
-            ".values": [ false, true ],
+            ".values": [ false, true, "borderless" ],
             ".options": [
                 "Fullscreen",
                 "Windowed",
                 "Borderless"
             ]
         },
-        "aa": {
+        "AA": {
             ".name": "Anti-Aliasing",
-            ".values": [ false ],
+            ".values": [ 1, 2, 4, 8, 16 ],
             ".desc": "Smooths sharp edges"
+        },
+        "AA": {
+            ".name": "Anisotropic Filtering",
+            ".values": [ 1, 2, 4, 8, 16],
+            ".desc": "Improves texture quality"
         },
         "vsync": {
             ".name": "Vertical Sync",
@@ -27,6 +32,20 @@
     },
 
     "audio": {
+        "sound-volume": {
+            ".name": "Sound Effects Volume",
+            ".min": 0,
+            ".max": 100,
+            ".default": 50,
+            ".postfix": "%"
+        },
+        "music-volume": {
+            ".name": "Music Volume",
+            ".min": 0,
+            ".max": 100,
+            ".default": 50,
+            ".postfix": "%"
+        },
         "volume": {
             ".name": "Volume",
             ".min": 0,
@@ -36,9 +55,6 @@
         }
     },
     
-    "controls": {
-    },
-
     "advanced": {
     }
 }

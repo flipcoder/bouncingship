@@ -25,8 +25,7 @@ GameState :: GameState(
     //m_pInterpreter(engine->interpreter()),
     //m_pScript(make_shared<Interpreter::Context>(engine->interpreter())),
     m_pPipeline(engine->pipeline())
-{
-}
+{}
 
 GameState :: GameState(
     Qor* engine,
@@ -49,7 +48,7 @@ void GameState :: preload()
     //m_pRoot->add(m_pMusic);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
-    m_pPhysics->world()->setGravity(btVector3(0.0, -30.0, 0.0));
+    m_pPhysics->world()->setGravity(btVector3(0.0, -40.0, 0.0));
     
     m_pController = m_pQor->session()->profile(0)->controller();
     
@@ -87,6 +86,9 @@ void GameState :: preload()
     m_pRoot->add(m);
     
     m_pPhysics->generate(m_pRoot.get(), (unsigned)Physics::GenerateFlag::RECURSIVE);
+
+    btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
+    ship_body->setFriction(0.0);
 }
 
 GameState :: ~GameState()
@@ -150,18 +152,21 @@ void GameState :: logic(Freq::Time t)
     else if(m_pController->button("decelerate"))
         v.z += 15.0f * t.s();
     
-    //LOGf("z: %s", v.z);
-    v.z = std::max(v.z, -45.0f);
+    v.z = std::max(v.z, -30.0f);
 
     if(m_pController->button("left"))
         v.x = -7.0f;
+        //v.x -= 7.0f * t.s();
     else if(m_pController->button("right"))
         v.x = 7.0f;
+        //v.x += 7.0f * t.s();
     else
         v.x = 0.0f;
+    
+    v.x = std::max(std::min(v.x, 10.0f), -10.0f);
 
     if(m_pController->button("jump"))
-        v.y = 10.0f;
+        v.y = 15.0f;
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
     m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
