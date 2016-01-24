@@ -48,25 +48,10 @@ void GameState :: preload()
     //m_pMusic = m_pQor->make<Sound>("1.ogg");
     //m_pRoot->add(m_pMusic);
     
-    //m_pPipeline = make_shared<Pipeline>(
-    //    m_pQor->window(),
-    //    m_pQor->resources(),
-    //    m_pRoot,
-    //    m_pCamera
-    //);
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
     m_pPhysics->world()->setGravity(btVector3(0.0, -30.0, 0.0));
     
-    //m_pRoot->add(make_shared<Mesh>(
-    //    m_pQor->resource_path("level_silentScalpels.obj"),
-    //    m_pQor->resources()
-    //));
     m_pController = m_pQor->session()->profile(0)->controller();
-    //m_pPlayer = kit::init_shared<PlayerInterface3D>(
-    //    m_pController,
-    //    m_pCamera,
-    //    m_pQor->session()->profile(0)->config()
-    //);
     
     auto win = m_pQor->window();
     auto bg = make_shared<Mesh>(
@@ -83,7 +68,6 @@ void GameState :: preload()
             "sky1.png"
         )
     ));
-    //bg->position(glm::vec3(0.0f, 0.0f, 0.0f));
     bg->position(glm::vec3(win->center().x, win->center().y, 0.0f));
     m_pOrthoRoot->add(bg);
     
@@ -102,20 +86,6 @@ void GameState :: preload()
 
     m_pRoot->add(m);
     
-    //m_pViewModel = make_shared<ViewModel>(
-    //    m_pCamera,
-    //    make_shared<Mesh>(
-    //        m_pQor->resource_path("gun_bullpup.obj"),
-    //        m_pQor->resources()
-    //    )
-    //);
-    ////m_pViewModel->node()->rotate(0.5f, Axis::Z);
-    //m_pViewModel->node()->position(glm::vec3(
-    //    ads ? 0.0f : 0.05f,
-    //    ads ? -0.04f : -0.06f,
-    //    ads ? -0.05f : -0.15f
-    //));
-    //m_pRoot->add(m_pViewModel);
     m_pPhysics->generate(m_pRoot.get(), (unsigned)Physics::GenerateFlag::RECURSIVE);
 }
 
@@ -138,12 +108,6 @@ void GameState :: enter()
     
     //m_pMusic->play();
 
-    //m_pScene = make_shared<Scene>(
-    //    m_pQor->resource_path("level_tantrum2013.json"),
-    //    m_pQor->resources()
-    //);
-    //m_pRoot->add(m_pScene->root());
-    
     on_tick.connect(std::move(screen_fader(
         [this](Freq::Time, float fade) {
             int fadev = m_pPipeline->shader(1)->uniform("LightAmbient");
@@ -167,8 +131,6 @@ void GameState :: enter()
             m_pQor->pop_state();
         }
     )));
-
-    //m_pScript->execute_string("enter()");
 }
 
 void GameState :: logic(Freq::Time t)
@@ -178,48 +140,18 @@ void GameState :: logic(Freq::Time t)
     if(m_pInput->key(SDLK_ESCAPE))
         m_pQor->quit();
  
-    //LOG(Vector::to_string(m_pCamera->position(Space::WORLD)));
-
-    //if(m_pController->button("zoom").pressed_now())
-    //    m_pViewModel->zoom(not m_pViewModel->zoomed());
-
-    //m_pViewModel->sway(m_pPlayer->move() != glm::vec3(0.0f));
-    //m_pViewModel->sprint(
-    //    m_pPlayer->move() != glm::vec3(0.0f) && m_pPlayer->sprint()
-    //);
-    
     m_pPhysics->logic(t);
     
-    //m_pScript->execute_string((
-    //    boost::format("logic(%s)") % t.s()
-    //).str());
-
-    //float speed = 1000.0f * t.s();
-    //if(m_pInput->key(SDLK_r))
-    //{
-    //    *m_pCamera->matrix() = glm::scale(
-    //        *m_pCamera->matrix(), glm::vec3(1.0f-t.s(), 1.0f-t.s(), 1.0f)
-    //    );
-    //    m_pCamera->pend();
-    //}
-    
-    //glm::vec3 v(0.0f);
-    //v.z = old_v.z;
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     glm::vec3 v = Physics::fromBulletVector(ship_body->getLinearVelocity());
     
     if(m_pController->button("accelerate"))
         v.z -= 15.0f * t.s();
-    //    v.z -= 50.0f * t.s();
-    //    //m_pShip->acceleration(glm::vec3(0.0f, 0.0f, 0.1f));
-    //    //v.z = -5.0f;
     else if(m_pController->button("decelerate"))
         v.z += 15.0f * t.s();
-    //    v.z += 50.0f * t.s();
-    //    //v.z = 5.0f;
-    ////else
-    //    //m_pShip->acceleration(glm::vec3(0.0f));
-    //v.z = std::min<float>(0.0f, std::max<float>(-25.0f, v.z));
+    
+    //LOGf("z: %s", v.z);
+    v.z = std::max(v.z, -45.0f);
 
     if(m_pController->button("left"))
         v.x = -7.0f;
@@ -230,30 +162,12 @@ void GameState :: logic(Freq::Time t)
 
     if(m_pController->button("jump"))
         v.y = 10.0f;
-        //rb->setLinearVelocity(btVector3(0.0, 5.0, 0.0));
-    //    v.y = 10.0f;
-    //else if(m_pShip->position().y > 0.0f)
-    //    v.y = -10.0f;
-    ////else if(m_pInput->key(SDLK_a))
-    ////    v.y = -10.0f;
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
     m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
     if(m_pShip->position().y < -20.0f)
         m_pQor->change_state("game");
-    //m_pShip->velocity(v);
-    
-    //if(m_pInput->key(SDLK_UP))
-    //    m_pCamera->move(glm::vec3(0.0f, -speed, 0.0f));
-    //if(m_pInput->key(SDLK_DOWN))
-    //    m_pCamera->move(glm::vec3(0.0f, speed, 0.0f));
-    
-    //if(m_pInput->key(SDLK_LEFT))
-    //    m_pCamera->move(glm::vec3(-speed, 0.0f, 0.0f));
-    //if(m_pInput->key(SDLK_RIGHT))
-    //    m_pCamera->move(glm::vec3(speed, 0.0f, 0.0f));
 
-    //LOGf("children: %s", m_pRoot->num_children());
     m_pOrthoRoot->logic(t);
     m_pRoot->logic(t);
 }
