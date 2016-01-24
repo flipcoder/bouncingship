@@ -3,7 +3,6 @@
 /*varying vec3 VertexPosition;*/
 varying vec3 Position;
 varying vec2 Wrap;
-varying vec3 ScreenPos;
 /*varying vec2 Normal;*/
 /*varying vec4 vLightAmbient;*/
 uniform vec4 LightAmbient;
@@ -42,7 +41,6 @@ float avg(vec3 c)
 void main()
 {
     vec4 color = texture2D(Texture, Wrap);
-    /*vec4 color = MaterialDiffuse;*/
     float e = 0.1; // threshold
     if(floatcmp(color.r, 1.0, e) &&
         floatcmp(color.g, 0.0, e) &&
@@ -54,6 +52,8 @@ void main()
         discard;
     }
     
-    gl_FragColor = MaterialDiffuse;
+    /*gl_FragColor = vec4(MaterialDiffuse.rgb, 1.0);*/
+    /*gl_FragColor = color;*/
+    gl_FragColor = vec4(mix(MaterialDiffuse, vec4(0.0, 0.0, 0.0, 1.0), abs(Position.z/100.0)).xyz, 1.0);
 }
 

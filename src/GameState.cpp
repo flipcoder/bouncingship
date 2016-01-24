@@ -48,7 +48,7 @@ void GameState :: preload()
     //m_pRoot->add(m_pMusic);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
-    m_pPhysics->world()->setGravity(btVector3(0.0, -40.0, 0.0));
+    m_pPhysics->world()->setGravity(btVector3(0.0, -60.0, 0.0));
     
     m_pController = m_pQor->session()->profile(0)->controller();
     
@@ -89,7 +89,7 @@ void GameState :: preload()
 
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     ship_body->setFriction(0.0);
-    ship_body->setCcdMotionThreshold(1.0f);
+    ship_body->setCcdMotionThreshold(0.2f);
     ship_body->setCcdSweptSphereRadius(0.2f);
 }
 
@@ -106,7 +106,7 @@ void GameState :: enter()
     m_pCamera->perspective();
     m_pCamera->mode(Camera::FOLLOW);
     m_pCamera->focus_time(Freq::Time(50));
-    m_pCamera->focal_offset(glm::vec3(0.025f, 2.5f, 8.0f));
+    m_pCamera->focal_offset(glm::vec3(0.025f, 2.0f, 6.0f));
     m_pCamera->track(m_pShip);
     m_pOrthoCamera->ortho();
     
@@ -157,18 +157,18 @@ void GameState :: logic(Freq::Time t)
     v.z = std::max(v.z, -30.0f);
 
     if(m_pController->button("left"))
-        v.x = -7.0f;
-        //v.x -= 7.0f * t.s();
+        v.x = -5.0f;
+        //v.x -= 14.0f * t.s();
     else if(m_pController->button("right"))
-        v.x = 7.0f;
-        //v.x += 7.0f * t.s();
+        v.x = 5.0f;
+        //v.x += 14.0f * t.s();
     else
         v.x = 0.0f;
     
     v.x = std::max(std::min(v.x, 10.0f), -10.0f);
 
     if(m_pController->button("jump"))
-        v.y = 15.0f;
+        v.y = 20.0f;
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
     m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));

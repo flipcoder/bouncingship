@@ -26,7 +26,6 @@ void main()
     /*Position = VertexPosition;*/
     gl_Position = ModelViewProjection * vec4(VertexPosition, 1.0);
     Wrap = VertexWrap;
-    ScreenPos = Position;
     /*vMaterialAmbient = MaterialAmbient;*/
     /*vMaterialDiffuse = MaterialDiffuse;*/
     /*vMaterialSpecular = MaterialSpecular;*/
