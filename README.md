@@ -5,8 +5,6 @@ Skyroads-inspired game written in C++11.
 
 Copyright &copy; 2016 Grady O'Connell
 
-See LICENSE for more information
-
 =====
 
 ## Screenshots ##
