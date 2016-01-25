@@ -20,7 +20,7 @@ class GameState:
     public:
         
         GameState(Qor* engine);
-        GameState(Qor* engine, std::string fn);
+        //GameState(Qor* engine, std::string fn);
         virtual ~GameState();
 
         virtual void enter() override;
@@ -81,6 +81,7 @@ class GameState:
         std::shared_ptr<Mesh> m_pSky;
 
         std::string m_Filename;
+        unsigned m_ColorShader = 0;
 };
 
 #endif

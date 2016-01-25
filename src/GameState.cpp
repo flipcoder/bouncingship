@@ -25,16 +25,19 @@ GameState :: GameState(
     //m_pInterpreter(engine->interpreter()),
     //m_pScript(make_shared<Interpreter::Context>(engine->interpreter())),
     m_pPipeline(engine->pipeline())
-{}
-
-GameState :: GameState(
-    Qor* engine,
-    std::string fn
-):
-    GameState(engine)
 {
-    m_Filename = fn;
+    m_ColorShader = m_pPipeline->load_shaders({"color"});
 }
+
+//GameState :: GameState(
+//    Qor* engine,
+//    std::string fn
+//):
+//    GameState(engine)
+//{
+//    // TODO: clear+clear cache of overrides, set size of shaders back to default
+//    //m_pPipeline->override_shader(PassType::NORMAL, m_ColorShader);
+//}
 
 void GameState :: preload()
 {
@@ -68,7 +71,7 @@ void GameState :: preload()
         )
     ));
     bg->position(glm::vec3(win->center().x, win->center().y, 0.0f));
-    //m_pOrthoRoot->add(bg);
+    m_pOrthoRoot->add(bg);
     
     m_pShip = m_pQor->make<Mesh>("quickship.obj");
     m_pShip->set_physics(Node::DYNAMIC);
@@ -112,29 +115,29 @@ void GameState :: enter()
     
     //m_pMusic->play();
 
-    on_tick.connect(std::move(screen_fader(
-        [this](Freq::Time, float fade) {
-            int fadev = m_pPipeline->shader(1)->uniform("LightAmbient");
-            if(fadev != -1)
-                m_pPipeline->shader(1)->uniform(
-                    fadev,
-                    glm::vec4(fade,fade,fade,1.0f)
-                );
-        },
-        [this](Freq::Time){
-            if(m_pInput->key(SDLK_ESCAPE))
-                return true;
-            return false;
-        },
-        [this](Freq::Time){
-            m_pPipeline->shader(1)->uniform(
-                m_pPipeline->shader(1)->uniform("LightAmbient"),
-                Color::white().vec4()
-            );
-            m_pPipeline->blend(false);
-            m_pQor->pop_state();
-        }
-    )));
+    //on_tick.connect(std::move(screen_fader(
+    //    [this](Freq::Time, float fade) {
+    //        int fadev = m_pPipeline->shader(1)->uniform("LightAmbient");
+    //        if(fadev != -1)
+    //            m_pPipeline->shader(1)->uniform(
+    //                fadev,
+    //                glm::vec4(fade,fade,fade,1.0f)
+    //            );
+    //    },
+    //    [this](Freq::Time){
+    //        if(m_pInput->key(SDLK_ESCAPE))
+    //            return true;
+    //        return false;
+    //    },
+    //    [this](Freq::Time){
+    //        m_pPipeline->shader(1)->uniform(
+    //            m_pPipeline->shader(1)->uniform("LightAmbient"),
+    //            Color::white().vec4()
+    //        );
+    //        m_pPipeline->blend(false);
+    //        m_pQor->pop_state();
+    //    }
+    //)));
 }
 
 void GameState :: logic(Freq::Time t)
@@ -188,6 +191,7 @@ void GameState :: render() const
         nullptr,
         Pipeline::NO_DEPTH
     );
+    m_pPipeline->override_shader(PassType::NORMAL, m_ColorShader);
     m_pPipeline->winding(false);
     m_pPipeline->render(
         m_pRoot.get(),
@@ -195,5 +199,6 @@ void GameState :: render() const
         nullptr,
         Pipeline::NO_CLEAR
     );
+    m_pPipeline->override_shader(PassType::NORMAL, (unsigned)PassType::NONE);
 }
 
