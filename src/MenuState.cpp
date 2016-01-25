@@ -136,7 +136,7 @@ void MenuState :: enter()
     m_pPipeline->blend(true);
     
     //m_MainMenu.name("Qorpse");
-    m_MainMenu.options().emplace_back("Play", [this]{
+    m_MainMenu.options().emplace_back("Start Game", [this]{
         m_pDone = make_shared<std::function<void()>>([this]{
             m_pQor->change_state(m_pQor->states().class_id("game"));
         });
