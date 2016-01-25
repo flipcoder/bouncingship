@@ -111,7 +111,7 @@ void MenuState :: enter()
         vector<shared_ptr<IMeshModifier>>{
             make_shared<Wrap>(Prefab::quad_wrap())
         },
-        make_shared<MeshMaterial>("sky1.png", m_pResources)
+        make_shared<MeshMaterial>("sky3.png", m_pResources)
     );
     //auto bg2 = bg->instance();
     bg->position(vec3(0.0f,0.0f,-1.0f));
@@ -318,7 +318,7 @@ void MenuState :: init_controls_menu()
                     m_pText = make_shared<string>();
                     auto gui = m_pMenuGUI;
                     auto guitext = m_pText;
-                    m_pInput->listen(Input::LISTEN_TEXT, m_pText,
+                    m_pInput->listen(Input::LISTEN_KEY, m_pText,
                         [text,action,gui,guitext](bool done){
                             *text = action + ": " + *guitext;
                             if(done){

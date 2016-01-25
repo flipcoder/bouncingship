@@ -47,8 +47,8 @@ void GameState :: preload()
     m_pRoot->add(m_pCamera->as_node());
     m_pOrthoRoot->add(m_pOrthoCamera->as_node());
     
-    //m_pMusic = m_pQor->make<Sound>("1.ogg");
-    //m_pRoot->add(m_pMusic);
+    m_pMusic = m_pQor->make<Sound>("1.ogg");
+    m_pRoot->add(m_pMusic);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
     m_pPhysics->world()->setGravity(btVector3(0.0, -60.0, 0.0));
@@ -82,7 +82,7 @@ void GameState :: preload()
     m_pRoot->add(m_pShip);
 
     auto m = make_shared<Mesh>(
-        m_pQor->resource_path("road1.obj"),
+        m_pQor->resource_path("bs2.obj"),
         m_pQor->resources()
     );
 
@@ -94,10 +94,15 @@ void GameState :: preload()
     ship_body->setFriction(0.0);
     ship_body->setCcdMotionThreshold(0.01f);
     ship_body->setCcdSweptSphereRadius(0.5f);
+
+    LOG(m->box().string());
 }
 
 GameState :: ~GameState()
 {
+    //m_pMusic->stop();
+    //m_pMusic = std::shared_ptr<Sound>();
+    //m_pQor->resources()->optimize();
     m_pPipeline->partitioner()->clear();
 }
 
@@ -113,7 +118,7 @@ void GameState :: enter()
     m_pCamera->track(m_pShip);
     m_pOrthoCamera->ortho();
     
-    //m_pMusic->play();
+    m_pMusic->play();
 
     //on_tick.connect(std::move(screen_fader(
     //    [this](Freq::Time, float fade) {
@@ -157,7 +162,7 @@ void GameState :: logic(Freq::Time t)
     else if(m_pController->button("decelerate"))
         v.z += 15.0f * t.s();
     
-    v.z = std::max(v.z, -30.0f);
+    v.z = std::max(v.z, -35.0f);
 
     if(m_pController->button("left"))
         v.x = -5.0f;
