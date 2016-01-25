@@ -92,8 +92,8 @@ void GameState :: preload()
 
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     ship_body->setFriction(0.0);
-    ship_body->setCcdMotionThreshold(0.2f);
-    ship_body->setCcdSweptSphereRadius(0.2f);
+    ship_body->setCcdMotionThreshold(0.01f);
+    ship_body->setCcdSweptSphereRadius(0.5f);
 }
 
 GameState :: ~GameState()
