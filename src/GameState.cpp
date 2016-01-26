@@ -218,15 +218,15 @@ void GameState :: logic(Freq::Time t)
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
     m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
-    //if(m_pShip->position().y < -40.0f){
-    //    m_pQor->change_state("game");
+    if(m_pShip->position().y < -100.0f){
+        m_pQor->change_state("game");
         //m_pShip->position(glm::vec3(0.0f, 10.0f, 0.0f));
         //glm::mat4 mat = *m_pShip->matrix_c();
         //Matrix::translation(mat, glm::vec3(0.0f, 10.0f, 0.0f));
         //ship_body->getMotionState()->setWorldTransform(
         //    Physics::toBulletTransform(*m_pShip->matrix_c())
         //);
-    //}
+    }
 
     m_pOrthoRoot->logic(t);
     m_pRoot->logic(t);
