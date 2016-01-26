@@ -56,6 +56,8 @@ class GameState:
             m_pCamera = std::dynamic_pointer_cast<Camera>(camera);
         }
         
+        void reset();
+        
     private:
         
         Qor* m_pQor = nullptr;

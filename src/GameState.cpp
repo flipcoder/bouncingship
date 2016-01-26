@@ -177,7 +177,7 @@ void GameState :: logic(Freq::Time t)
     
     // ship crashing
     if(front_hit_node && v.z < -20.0f)
-        m_pQor->change_state("game");
+        reset();
     //assert(front_hit_node != m_pShip.get());
     
     if(m_pController->button("accelerate"))
@@ -218,18 +218,23 @@ void GameState :: logic(Freq::Time t)
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
     m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
-    if(m_pShip->position().y < -100.0f){
-        m_pQor->change_state("game");
-        //m_pShip->position(glm::vec3(0.0f, 10.0f, 0.0f));
-        //glm::mat4 mat = *m_pShip->matrix_c();
-        //Matrix::translation(mat, glm::vec3(0.0f, 10.0f, 0.0f));
-        //ship_body->getMotionState()->setWorldTransform(
-        //    Physics::toBulletTransform(*m_pShip->matrix_c())
-        //);
-    }
+    
+    if(m_pShip->position().y < -100.0f)
+        reset();
 
     m_pOrthoRoot->logic(t);
     m_pRoot->logic(t);
+}
+
+void GameState :: reset()
+{
+    btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
+    m_pShip->position(glm::vec3(0.0f, 10.0f, 0.0f));
+    glm::mat4 mat = *m_pShip->matrix_c();
+    ship_body->setWorldTransform(Physics::toBulletTransform(mat));
+    ship_body->setLinearVelocity(
+        Physics::toBulletVector(glm::vec3(0.0f, 0.0f, 0.0f))
+    );
 }
 
 void GameState :: render() const
