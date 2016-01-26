@@ -22,9 +22,8 @@ GameState :: GameState(
     m_pInput(engine->input()),
     m_pRoot(make_shared<Node>()),
     m_pOrthoRoot(make_shared<Node>()),
-    //m_pInterpreter(engine->interpreter()),
-    //m_pScript(make_shared<Interpreter::Context>(engine->interpreter())),
-    m_pPipeline(engine->pipeline())
+    m_pPipeline(engine->pipeline()),
+    m_JumpTimer(&m_GameTime)
 {
     m_ColorShader = m_pPipeline->load_shaders({"color"});
 }
@@ -47,8 +46,8 @@ void GameState :: preload()
     m_pRoot->add(m_pCamera->as_node());
     m_pOrthoRoot->add(m_pOrthoCamera->as_node());
     
-    m_pMusic = m_pQor->make<Sound>("1.ogg");
-    m_pRoot->add(m_pMusic);
+    //m_pMusic = m_pQor->make<Sound>("1.ogg");
+    //m_pRoot->add(m_pMusic);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
     m_pPhysics->world()->setGravity(btVector3(0.0, -60.0, 0.0));
@@ -82,7 +81,7 @@ void GameState :: preload()
     m_pRoot->add(m_pShip);
 
     auto m = make_shared<Mesh>(
-        m_pQor->resource_path("bs2.obj"),
+        m_pQor->resource_path("road1.obj"),
         m_pQor->resources()
     );
 
@@ -116,9 +115,10 @@ void GameState :: enter()
     m_pCamera->focus_time(Freq::Time(50));
     m_pCamera->focal_offset(glm::vec3(0.025f, 2.0f, 6.0f));
     m_pCamera->track(m_pShip);
+    m_pCamera->range(0.01f, 100.0f);
     m_pOrthoCamera->ortho();
     
-    m_pMusic->play();
+    //m_pMusic->play();
 
     //on_tick.connect(std::move(screen_fader(
     //    [this](Freq::Time, float fade) {
@@ -148,6 +148,7 @@ void GameState :: enter()
 void GameState :: logic(Freq::Time t)
 {
     Actuation::logic(t);
+    m_GameTime.logic(t);
     
     if(m_pInput->key(SDLK_ESCAPE))
         m_pQor->quit();
@@ -156,6 +157,28 @@ void GameState :: logic(Freq::Time t)
     
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     glm::vec3 v = Physics::fromBulletVector(ship_body->getLinearVelocity());
+
+    // raycast front and bottom for crashing and jumping
+    auto pos = m_pShip->position();
+    auto hit = m_pPhysics->first_hit(
+        pos - glm::vec3(0.0f, 1.0f, 0.0f),
+        pos
+    );
+    auto front_hit = m_pPhysics->first_hit(
+        pos - glm::vec3(0.0f, 0.0f, 1.5f),
+        pos
+    );
+    Node* hit_node = std::get<0>(hit);
+    Node* front_hit_node = std::get<0>(front_hit);
+    if(hit_node == m_pShip.get())
+        hit_node = nullptr;
+    if(front_hit_node == m_pShip.get())
+        front_hit_node = nullptr;
+    
+    // ship crashing
+    if(front_hit_node && v.z < -20.0f)
+        m_pQor->change_state("game");
+    //assert(front_hit_node != m_pShip.get());
     
     if(m_pController->button("accelerate"))
         v.z -= 15.0f * t.s();
@@ -176,7 +199,22 @@ void GameState :: logic(Freq::Time t)
     v.x = std::max(std::min(v.x, 10.0f), -10.0f);
 
     if(m_pController->button("jump"))
-        v.y = 20.0f;
+    {
+        if(hit_node)
+        {
+            m_JumpTimer.set(Freq::Time(100));
+            v.y = 15.0f;
+        }
+        else if(not m_JumpTimer.elapsed())
+        {
+            //m_pController->button("jump").consume();
+            v.y = 15.0f;
+        }
+    } else {
+        m_JumpTimer.reset();
+    }
+    //else
+    //    if(not hit_node)
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
     m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));

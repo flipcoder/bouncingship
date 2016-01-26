@@ -82,6 +82,10 @@ class GameState:
 
         std::string m_Filename;
         unsigned m_ColorShader = 0;
+
+        Freq::Alarm m_JumpTimer;
+
+        Freq::Timeline m_GameTime;
 };
 
 #endif

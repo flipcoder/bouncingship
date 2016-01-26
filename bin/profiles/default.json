@@ -13,8 +13,7 @@
             "s": "left",
             "f": "right",
             "space": [
-                "jump",
-                "select"
+                "jump"
             ]
         }
     }
