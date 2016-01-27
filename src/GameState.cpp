@@ -46,8 +46,8 @@ void GameState :: preload()
     m_pRoot->add(m_pCamera->as_node());
     m_pOrthoRoot->add(m_pOrthoCamera->as_node());
     
-    //m_pMusic = m_pQor->make<Sound>("1.ogg");
-    //m_pRoot->add(m_pMusic);
+    m_pMusic = m_pQor->make<Sound>("1.ogg");
+    m_pRoot->add(m_pMusic);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
     m_pPhysics->world()->setGravity(btVector3(0.0, -60.0, 0.0));
@@ -82,7 +82,7 @@ void GameState :: preload()
     m_pRoot->add(m_pShip);
 
     auto m = make_shared<Mesh>(
-        m_pQor->resource_path("road1.obj"),
+        m_pQor->resource_path("road3.obj"),
         m_pQor->resources()
     );
 
@@ -94,6 +94,12 @@ void GameState :: preload()
     ship_body->setFriction(0.0);
     ship_body->setCcdMotionThreshold(0.01f);
     ship_body->setCcdSweptSphereRadius(0.5f);
+
+    m_sndLand = m_pQor->make<Sound>("land.wav");
+    m_sndJump = m_pQor->make<Sound>("jump.wav");
+    m_sndCrash = m_pQor->make<Sound>("crash.wav");
+    m_sndFall = m_pQor->make<Sound>("fall.wav");
+    m_sndFinish = m_pQor->make<Sound>("finish.wav");
 
     //LOG(m->box().string());
 }
@@ -119,7 +125,7 @@ void GameState :: enter()
     m_pCamera->range(0.01f, 100.0f);
     m_pOrthoCamera->ortho();
     
-    //m_pMusic->play();
+    m_pMusic->play();
 
     //on_tick.connect(std::move(screen_fader(
     //    [this](Freq::Time, float fade) {
@@ -184,6 +190,8 @@ void GameState :: logic(Freq::Time t)
     if(front_hit_node && v.z < -20.0f &&
        front_hit_normal == glm::vec3(0.0f, 0.0f, -1.0f)
     ){
+        m_pShip->add(m_sndCrash);
+        m_sndCrash->play();
         reset();
         return;
     }
@@ -211,6 +219,8 @@ void GameState :: logic(Freq::Time t)
     {
         if(hit_node)
         {
+            m_pShip->add(m_sndJump);
+            m_sndJump->play();
             m_JumpTimer.set(Freq::Time(150));
             v.y = 15.0f;
         }
@@ -219,14 +229,26 @@ void GameState :: logic(Freq::Time t)
             v.y = 15.0f;
         }
     } else {
+        if(hit_node)
+        {
+            if(not m_JumpTimer.elapsed())
+            {
+                m_pShip->add(m_sndLand);
+                m_sndLand->play();
+            }
+        }
         m_JumpTimer.reset();
     }
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
-    m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
+    //m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
     
     if(m_pShip->position().y < -100.0f)
+    {
+        m_pShip->add(m_sndFall);
+        m_sndFall->play();
         reset();
+    }
 
     m_pOrthoRoot->logic(t);
     m_pRoot->logic(t);

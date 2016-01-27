@@ -82,6 +82,12 @@ class GameState:
         std::shared_ptr<Node> m_pOrthoRoot;
         std::shared_ptr<Mesh> m_pSky;
 
+        std::shared_ptr<Sound> m_sndLand;
+        std::shared_ptr<Sound> m_sndJump;
+        std::shared_ptr<Sound> m_sndCrash;
+        std::shared_ptr<Sound> m_sndFall;
+        std::shared_ptr<Sound> m_sndFinish;
+
         std::string m_Filename;
         unsigned m_ColorShader = 0;
 
