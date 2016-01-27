@@ -63,6 +63,7 @@ class MenuState:
         }
         
         void init_controls_menu();
+        void init_map_menu();
         
     private:
         
@@ -90,6 +91,7 @@ class MenuState:
         std::shared_ptr<MenuGUI> m_pMenuGUI;
         MenuContext m_MenuContext;
         Menu m_MainMenu;
+        Menu m_MapMenu;
         Menu m_OptionsMenu;
         Menu m_ControlsMenu;
         

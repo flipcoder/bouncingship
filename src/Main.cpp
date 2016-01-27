@@ -34,7 +34,7 @@ int main(int argc, const char** argv)
         auto engine = kit::make_unique<Qor>(args);
         engine->states().register_class<GameState>("game");
         engine->states().register_class<MenuState>("menu");
-        engine->run("game");
+        engine->run("menu");
 #ifndef DEBUG
     }catch(const Error&){
         // already logged

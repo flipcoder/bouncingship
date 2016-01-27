@@ -62,7 +62,7 @@ void MenuState :: preload()
         make_shared<MeshGeometry>(
             Prefab::quad(
                 -vec2(win->size().y, win->size().y)/4.0f,
-                vec2(win->size().y/4.0f, win->size().y/16.0f)
+                vec2(win->size().y/4.0f, win->size().y/32.0f)
             )
         ));
     logo->add_modifier(make_shared<Wrap>(Prefab::quad_wrap(
@@ -72,7 +72,7 @@ void MenuState :: preload()
     logo->material(make_shared<MeshMaterial>(tex));
     logo->move(vec3(
         win->center().x,
-        win->center().y / 2.0f + win->size().y / 8.0f / 2.0f,
+        win->center().y / 2.0f + win->size().y / 16.0f,
         -1.0f
     ));
     m_pRoot->add(logo);
@@ -106,41 +106,41 @@ void MenuState :: enter()
     
     m_pRoot->add(m_pCanvas);
     
-    auto bg = make_shared<Mesh>(
-        make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh))),
-        vector<shared_ptr<IMeshModifier>>{
-            make_shared<Wrap>(Prefab::quad_wrap())
-        },
-        make_shared<MeshMaterial>("sky3.png", m_pResources)
-    );
-    //auto bg2 = bg->instance();
-    bg->position(vec3(0.0f,0.0f,-1.0f));
+    //auto bg = make_shared<Mesh>(
+    //    make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh))),
+    //    vector<shared_ptr<IMeshModifier>>{
+    //        make_shared<Wrap>(Prefab::quad_wrap())
+    //    },
+    //    make_shared<MeshMaterial>("sky3.png", m_pResources)
+    //);
+    //bg->position(vec3(0.0f,0.0f,-1.0f));
     //bg2->position(vec3(0.0f,0.0f,-1.0f));
-    m_pRoot->add(bg);
-    on_tick.connect([this, bg](Freq::Time t){
-        m_WrapAccum.x += t.seconds() * 0.01f;
-        m_WrapAccum.y += t.seconds() * 0.01f;
+    //m_pRoot->add(bg);
+    //on_tick.connect([this, bg](Freq::Time t){
+    //    m_WrapAccum.x += t.seconds() * 0.01f;
+    //    m_WrapAccum.y += t.seconds() * 0.01f;
         
-        m_WrapAccum += m_pInput->mouse_rel() * 0.0001f;
-        m_WrapAccum.x = std::fmod(m_WrapAccum.x, 1.0f);
-        m_WrapAccum.y = std::fmod(m_WrapAccum.y, 1.0f);
+    //    m_WrapAccum += m_pInput->mouse_rel() * 0.0001f;
+    //    m_WrapAccum.x = std::fmod(m_WrapAccum.x, 1.0f);
+    //    m_WrapAccum.y = std::fmod(m_WrapAccum.y, 1.0f);
         
-        bg->swap_modifier(0, make_shared<Wrap>(Prefab::quad_wrap(
-             vec2(0.0f), vec2(1.0f),
-             vec2(0.8f + 0.2f * m_Fade), //scale
-             vec2(m_WrapAccum.x * 1.0f, m_WrapAccum.y * 1.0f) //offset
-        )));
-    });
+    //    bg->swap_modifier(0, make_shared<Wrap>(Prefab::quad_wrap(
+    //         vec2(0.0f), vec2(1.0f),
+    //         vec2(0.8f + 0.2f * m_Fade), //scale
+    //         vec2(m_WrapAccum.x * 1.0f, m_WrapAccum.y * 1.0f) //offset
+    //    )));
+    //});
     
     // set up screen fade
     m_pPipeline->blend(true);
     
     //m_MainMenu.name("Qorpse");
     m_MainMenu.options().emplace_back("Start Game", [this]{
-        m_pDone = make_shared<std::function<void()>>([this]{
-            m_pQor->change_state(m_pQor->states().class_id("game"));
-        });
-        m_pMenuGUI->pause();
+        m_MenuContext.push(&m_MapMenu);
+        //m_pDone = make_shared<std::function<void()>>([this]{
+        //    m_pQor->change_state(m_pQor->states().class_id("game"));
+        //});
+        //m_pMenuGUI->pause();
     });
     //m_MainMenu.options().emplace_back("Continue", [this]{
     //    m_pDone = make_shared<std::function<void()>>([this]{
@@ -226,6 +226,7 @@ void MenuState :: enter()
         Menu::Option::BACK
     );
 
+    init_map_menu();
     init_controls_menu();
 
     m_MenuContext.clear(&m_MainMenu);
@@ -276,6 +277,35 @@ MenuState :: ~MenuState()
 {
     m_pPipeline->partitioner()->clear();
     m_pResources->optimize();
+}
+
+void MenuState :: init_map_menu()
+{
+    shared_ptr<Meta> maps = make_shared<Meta>(m_pQor->resource_path("maps.json"));
+    maps = maps->at<shared_ptr<Meta>>("maps");
+    
+    for(auto&& map: *maps)
+    {
+        string m = map.as<string>();
+        m_MapMenu.options().emplace_back(m, [this, m]{ 
+            m_pDone = make_shared<std::function<void()>>([this,m]{
+                m_pQor->args().set("map", m);
+                m_pQor->change_state("game");
+            });
+        });
+    }
+
+    m_MapMenu.options().emplace_back(
+        "Back", 
+        [this]{
+            m_pQor->save_settings();
+            m_MenuContext.pop();
+        },
+        std::function<bool(int)>(), // no adjust
+        string(), // no desc
+        Menu::Option::BACK
+    );
+
 }
 
 void MenuState :: init_controls_menu()

@@ -82,7 +82,7 @@ void GameState :: preload()
     m_pRoot->add(m_pShip);
 
     auto m = make_shared<Mesh>(
-        m_pQor->resource_path("road3.obj"),
+        m_pQor->resource_path(m_pQor->args().value_or("map", "road1")+".obj"),
         m_pQor->resources()
     );
 
@@ -92,8 +92,8 @@ void GameState :: preload()
 
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     ship_body->setFriction(0.0);
-    ship_body->setCcdMotionThreshold(0.01f);
-    ship_body->setCcdSweptSphereRadius(0.5f);
+    ship_body->setCcdMotionThreshold(0.001f);
+    ship_body->setCcdSweptSphereRadius(0.25f);
 
     m_sndLand = m_pQor->make<Sound>("land.wav");
     m_sndJump = m_pQor->make<Sound>("jump.wav");
