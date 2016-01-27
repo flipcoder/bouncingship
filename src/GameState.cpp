@@ -78,6 +78,7 @@ void GameState :: preload()
     m_pShip->mass(1.0f);
     m_pShip->rotate(0.5f, glm::vec3(0.0f, 1.0f, 0.0f));
     m_pShip->position(glm::vec3(0.0f, 10.0f, 0.0f));
+    //LOGf("box: %s", m_pShip->box().string());
     m_pRoot->add(m_pShip);
 
     auto m = make_shared<Mesh>(
