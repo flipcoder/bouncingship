@@ -163,6 +163,7 @@ void GameState :: logic(Freq::Time t)
     auto hit = m_pPhysics->first_hit(
         pos - glm::vec3(0.0f, 1.0f, 0.0f),
         pos
+        //pos
     );
     auto front_hit = m_pPhysics->first_hit(
         pos - glm::vec3(0.0f, 0.0f, 1.5f),
@@ -170,14 +171,21 @@ void GameState :: logic(Freq::Time t)
     );
     Node* hit_node = std::get<0>(hit);
     Node* front_hit_node = std::get<0>(front_hit);
-    if(hit_node == m_pShip.get())
-        hit_node = nullptr;
-    if(front_hit_node == m_pShip.get())
-        front_hit_node = nullptr;
+    assert(hit_node != m_pShip.get());
+    assert(front_hit_node != m_pShip.get());
+    //if(hit_node == m_pShip.get())
+    //    hit_node = nullptr;
+    //if(front_hit_node == m_pShip.get())
+    //    front_hit_node = nullptr;
+    glm::vec3 front_hit_normal = std::get<2>(front_hit);
     
     // ship crashing
-    if(front_hit_node && v.z < -20.0f)
+    if(front_hit_node && v.z < -20.0f &&
+       front_hit_normal == glm::vec3(0.0f, 0.0f, -1.0f)
+    ){
         reset();
+        return;
+    }
     //assert(front_hit_node != m_pShip.get());
     
     if(m_pController->button("accelerate"))
@@ -202,19 +210,16 @@ void GameState :: logic(Freq::Time t)
     {
         if(hit_node)
         {
-            m_JumpTimer.set(Freq::Time(100));
+            m_JumpTimer.set(Freq::Time(150));
             v.y = 15.0f;
         }
         else if(not m_JumpTimer.elapsed())
         {
-            //m_pController->button("jump").consume();
             v.y = 15.0f;
         }
     } else {
         m_JumpTimer.reset();
     }
-    //else
-    //    if(not hit_node)
     
     ship_body->setLinearVelocity(Physics::toBulletVector(v));
     m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
