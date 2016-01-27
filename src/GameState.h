@@ -81,6 +81,7 @@ class GameState:
         std::shared_ptr<Mesh> m_pShip;
         std::shared_ptr<Node> m_pOrthoRoot;
         std::shared_ptr<Mesh> m_pSky;
+        std::shared_ptr<Mesh> m_pMap;
 
         std::shared_ptr<Sound> m_sndLand;
         std::shared_ptr<Sound> m_sndJump;
@@ -90,6 +91,7 @@ class GameState:
 
         std::string m_Filename;
         unsigned m_ColorShader = 0;
+        bool m_bInAir = false;
 
         Freq::Alarm m_JumpTimer;
 

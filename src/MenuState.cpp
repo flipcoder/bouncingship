@@ -106,16 +106,15 @@ void MenuState :: enter()
     
     m_pRoot->add(m_pCanvas);
     
-    //auto bg = make_shared<Mesh>(
-    //    make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh))),
-    //    vector<shared_ptr<IMeshModifier>>{
-    //        make_shared<Wrap>(Prefab::quad_wrap())
-    //    },
-    //    make_shared<MeshMaterial>("sky3.png", m_pResources)
-    //);
-    //bg->position(vec3(0.0f,0.0f,-1.0f));
-    //bg2->position(vec3(0.0f,0.0f,-1.0f));
-    //m_pRoot->add(bg);
+    auto bg = make_shared<Mesh>(
+        make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh))),
+        vector<shared_ptr<IMeshModifier>>{
+            make_shared<Wrap>(Prefab::quad_wrap())
+        },
+        make_shared<MeshMaterial>("sky3.png", m_pResources)
+    );
+    bg->position(vec3(0.0f,0.0f,-1.0f));
+    m_pRoot->add(bg);
     //on_tick.connect([this, bg](Freq::Time t){
     //    m_WrapAccum.x += t.seconds() * 0.01f;
     //    m_WrapAccum.y += t.seconds() * 0.01f;
@@ -135,7 +134,7 @@ void MenuState :: enter()
     m_pPipeline->blend(true);
     
     //m_MainMenu.name("Qorpse");
-    m_MainMenu.options().emplace_back("Start Game", [this]{
+    m_MainMenu.options().emplace_back("Play", [this]{
         m_MenuContext.push(&m_MapMenu);
         //m_pDone = make_shared<std::function<void()>>([this]{
         //    m_pQor->change_state(m_pQor->states().class_id("game"));
@@ -310,28 +309,12 @@ void MenuState :: init_map_menu()
 
 void MenuState :: init_controls_menu()
 {
-    shared_ptr<Meta> binds;
-    TRY(binds = m_pQor->session()->profile(0)->config()->
-        meta("input")->meta("binds")
-    );
+    auto profile = m_pQor->session()->profile(0);
+    m_Binds = profile->binds();
 
-    if(binds)
+    if(not m_Binds.empty())
     {
-        for(auto&& bind: *binds)
-        {
-            try{
-                // individual action -> key
-                m_Binds[bind.as<string>()].push_back(bind.key);
-            }catch(const boost::bad_any_cast&){
-                // many actions -> one key
-                auto bind_list = bind.as<shared_ptr<Meta>>();
-                for(auto&& key: *bind_list)
-                    m_Binds[key.as<string>()].push_back(bind.key);
-            }
-        }
-
-        // TODO: add empty binds for buttons not found
-        
+        // TODO: add empty binds for buttons not found ?
         for(auto&& bind: m_Binds)
         {
             string action = bind.first;
@@ -342,15 +325,19 @@ void MenuState :: init_controls_menu()
             );
             m_ControlsMenu.options().emplace_back(
                 text,
-                [this, action, text]{
+                [this, action, text, profile]{
                     *text = action + ": ...";
                     m_pMenuGUI->pause();
                     m_pText = make_shared<string>();
                     auto gui = m_pMenuGUI;
                     auto guitext = m_pText;
                     m_pInput->listen(Input::LISTEN_KEY, m_pText,
-                        [text,action,gui,guitext](bool done){
+                        [this, profile,text,action,gui,guitext](bool done){
                             *text = action + ": " + *guitext;
+                            m_Binds[action] = std::vector<std::string>({
+                                *guitext
+                            });
+                            profile->binds(m_Binds);
                             if(done){
                                 gui->pause(false);
                                 gui->consume();
@@ -363,8 +350,9 @@ void MenuState :: init_controls_menu()
     }
 
     m_ControlsMenu.options().emplace_back(
-        "Back", 
+        "Back",
         [this]{
+            LOG("back");
             m_pQor->save_settings();
             m_MenuContext.pop();
         },

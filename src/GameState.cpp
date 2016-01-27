@@ -46,8 +46,8 @@ void GameState :: preload()
     m_pRoot->add(m_pCamera->as_node());
     m_pOrthoRoot->add(m_pOrthoCamera->as_node());
     
-    m_pMusic = m_pQor->make<Sound>("1.ogg");
-    m_pRoot->add(m_pMusic);
+    //m_pMusic = m_pQor->make<Sound>("1.ogg");
+    //m_pRoot->add(m_pMusic);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
     m_pPhysics->world()->setGravity(btVector3(0.0, -60.0, 0.0));
@@ -81,12 +81,12 @@ void GameState :: preload()
     //LOGf("box: %s", m_pShip->box().string());
     m_pRoot->add(m_pShip);
 
-    auto m = make_shared<Mesh>(
+    m_pMap = make_shared<Mesh>(
         m_pQor->resource_path(m_pQor->args().value_or("map", "road1")+".obj"),
         m_pQor->resources()
     );
 
-    m_pRoot->add(m);
+    m_pRoot->add(m_pMap);
     
     m_pPhysics->generate(m_pRoot.get(), (unsigned)Physics::GenerateFlag::RECURSIVE);
 
@@ -94,6 +94,7 @@ void GameState :: preload()
     ship_body->setFriction(0.0);
     ship_body->setCcdMotionThreshold(0.001f);
     ship_body->setCcdSweptSphereRadius(0.25f);
+    ship_body->setActivationState(DISABLE_DEACTIVATION);
 
     m_sndLand = m_pQor->make<Sound>("land.wav");
     m_sndJump = m_pQor->make<Sound>("jump.wav");
@@ -125,7 +126,7 @@ void GameState :: enter()
     m_pCamera->range(0.01f, 100.0f);
     m_pOrthoCamera->ortho();
     
-    m_pMusic->play();
+    //m_pMusic->play();
 
     //on_tick.connect(std::move(screen_fader(
     //    [this](Freq::Time, float fade) {
@@ -161,93 +162,128 @@ void GameState :: logic(Freq::Time t)
         m_pQor->quit();
  
     m_pPhysics->logic(t);
-    
-    btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
-    glm::vec3 v = Physics::fromBulletVector(ship_body->getLinearVelocity());
 
-    // raycast front and bottom for crashing and jumping
-    auto pos = m_pShip->position();
-    auto hit = m_pPhysics->first_hit(
-        pos - glm::vec3(0.0f, 1.0f, 0.0f),
-        pos
-        //pos
-    );
-    auto front_hit = m_pPhysics->first_hit(
-        pos - glm::vec3(0.0f, 0.0f, 1.5f),
-        pos
-    );
-    Node* hit_node = std::get<0>(hit);
-    Node* front_hit_node = std::get<0>(front_hit);
-    assert(hit_node != m_pShip.get());
-    assert(front_hit_node != m_pShip.get());
-    //if(hit_node == m_pShip.get())
-    //    hit_node = nullptr;
-    //if(front_hit_node == m_pShip.get())
-    //    front_hit_node = nullptr;
-    glm::vec3 front_hit_normal = std::get<2>(front_hit);
-    
-    // ship crashing
-    if(front_hit_node && v.z < -20.0f &&
-       front_hit_normal == glm::vec3(0.0f, 0.0f, -1.0f)
-    ){
-        m_pShip->add(m_sndCrash);
-        m_sndCrash->play();
-        reset();
-        return;
-    }
-    //assert(front_hit_node != m_pShip.get());
-    
-    if(m_pController->button("accelerate"))
-        v.z -= 15.0f * t.s();
-    else if(m_pController->button("decelerate"))
-        v.z += 15.0f * t.s();
-    
-    v.z = std::max(v.z, -35.0f);
-
-    if(m_pController->button("left"))
-        v.x = -5.0f;
-        //v.x -= 14.0f * t.s();
-    else if(m_pController->button("right"))
-        v.x = 5.0f;
-        //v.x += 14.0f * t.s();
-    else
-        v.x = 0.0f;
-    
-    v.x = std::max(std::min(v.x, 10.0f), -10.0f);
-
-    if(m_pController->button("jump"))
+    if(m_pShip)
     {
-        if(hit_node)
-        {
-            m_pShip->add(m_sndJump);
-            m_sndJump->play();
-            m_JumpTimer.set(Freq::Time(150));
-            v.y = 15.0f;
+    
+        btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
+        glm::vec3 v = Physics::fromBulletVector(ship_body->getLinearVelocity());
+
+        // raycast front and bottom for crashing and jumping
+        auto pos = m_pShip->position();
+        auto hit = m_pPhysics->first_hit(
+            pos,
+            pos - m_pShip->box().size().y/2.0f - glm::vec3(0.0f, 0.1f, 0.0f)
+        );
+        auto front_hit = m_pPhysics->first_hit(
+            pos,
+            pos + glm::vec3(0.0f, 0.0f, -2.0f)
+        );
+        
+        auto top_hit = m_pPhysics->first_hit(
+            pos,
+            pos - m_pShip->box().size().y/2.0f + glm::vec3(0.0f, 100.0f, 0.0f)
+        );
+        auto bottom_hit = m_pPhysics->first_hit(
+            pos,
+            pos - m_pShip->box().size().y/2.0f - glm::vec3(0.0f, 100.0f, 0.0f)
+        );
+
+        Node* jump_hit_node = std::get<0>(hit);
+        Node* front_hit_node = std::get<0>(front_hit);
+        Node* top_hit_node = std::get<0>(top_hit);
+        Node* bottom_hit_node = std::get<0>(bottom_hit);
+
+        //LOGf("ship pos %s", m_pShip->position().z);
+        //LOGf("map min %s", m_pShip->box().min().z);
+        //LOGf("top hit %s", !!top_hit_node);
+        //LOGf("bottom hit %s", !!bottom_hit_node);
+        if(m_pShip->position().z <
+            m_pMap->box().min().z + m_pShip->box().size().z &&
+            top_hit_node && bottom_hit_node
+        ){
+            m_sndFinish->position(m_pShip->position());
+            m_pRoot->add(m_sndFinish);
+            m_pShip->clear_body();
+            m_pShip->detach();
+            m_pShip = nullptr;
+            m_sndFinish->on_done([this]{
+                m_pQor->change_state("menu");
+            });
+            m_sndFinish->play();
+            return;
         }
-        else if(not m_JumpTimer.elapsed())
-        {
-            v.y = 15.0f;
+
+        assert(jump_hit_node != m_pShip.get());
+        assert(front_hit_node != m_pShip.get());
+        //if(hit_node == m_pShip.get())
+        //    hit_node = nullptr;
+        //if(front_hit_node == m_pShip.get())
+        //    front_hit_node = nullptr;
+        glm::vec3 front_hit_normal = std::get<2>(front_hit);
+        
+        // ship crashing
+        if(front_hit_node && v.z < -20.0f &&
+           front_hit_normal == glm::vec3(0.0f, 0.0f, 1.0f)
+        ){
+            //LOG(Vector::to_string(front_hit_normal));
+            m_pShip->add(m_sndCrash);
+            m_sndCrash->play();
+            reset();
+            return;
         }
-    } else {
-        if(hit_node)
+        //assert(front_hit_node != m_pShip.get());
+        
+        if(m_pController->button("accelerate"))
+            v.z -= 15.0f * t.s();
+        else if(m_pController->button("decelerate"))
+            v.z += 15.0f * t.s();
+        
+        v.z = std::max(v.z, -35.0f);
+
+        if(m_pController->button("left"))
+            v.x = -5.0f;
+            //v.x -= 14.0f * t.s();
+        else if(m_pController->button("right"))
+            v.x = 5.0f;
+            //v.x += 14.0f * t.s();
+        else
+            v.x = 0.0f;
+        
+        v.x = std::max(std::min(v.x, 10.0f), -10.0f);
+        
+        if(jump_hit_node && m_bInAir)
         {
-            if(not m_JumpTimer.elapsed())
+            m_pShip->add(m_sndLand);
+            m_sndLand->play();
+        }
+        m_bInAir = not jump_hit_node;
+        if(m_pController->button("jump"))
+        {
+            if(jump_hit_node)
             {
-                m_pShip->add(m_sndLand);
-                m_sndLand->play();
+                m_pShip->add(m_sndJump);
+                m_sndJump->play();
+                m_JumpTimer.set(Freq::Time(150));
+                v.y = 15.0f;
             }
+            else if(not m_JumpTimer.elapsed())
+            {
+                v.y = 15.0f;
+            }
+        } else {
+            m_JumpTimer.reset();
         }
-        m_JumpTimer.reset();
-    }
-    
-    ship_body->setLinearVelocity(Physics::toBulletVector(v));
-    //m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
-    
-    if(m_pShip->position().y < -100.0f)
-    {
-        m_pShip->add(m_sndFall);
-        m_sndFall->play();
-        reset();
+        
+        ship_body->setLinearVelocity(Physics::toBulletVector(v));
+        //m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
+        
+        if(m_pShip->position().y < m_pMap->box().min().y)
+        {
+            m_pShip->add(m_sndFall);
+            m_sndFall->play();
+            reset();
+        }
     }
 
     m_pOrthoRoot->logic(t);
