@@ -46,8 +46,8 @@ void GameState :: preload()
     m_pRoot->add(m_pCamera->as_node());
     m_pOrthoRoot->add(m_pOrthoCamera->as_node());
     
-    //m_pMusic = m_pQor->make<Sound>("1.ogg");
-    //m_pRoot->add(m_pMusic);
+    m_pMusic = m_pQor->make<Sound>("2.ogg");
+    m_pRoot->add(m_pMusic);
     
     m_pPhysics = make_shared<Physics>(m_pRoot.get(), (void*)this);
     m_pPhysics->world()->setGravity(btVector3(0.0, -60.0, 0.0));
@@ -126,7 +126,7 @@ void GameState :: enter()
     m_pCamera->range(0.01f, 100.0f);
     m_pOrthoCamera->ortho();
     
-    //m_pMusic->play();
+    m_pMusic->play();
 
     //on_tick.connect(std::move(screen_fader(
     //    [this](Freq::Time, float fade) {
@@ -159,7 +159,8 @@ void GameState :: logic(Freq::Time t)
     m_GameTime.logic(t);
     
     if(m_pInput->key(SDLK_ESCAPE))
-        m_pQor->quit();
+        m_pQor->change_state("menu");
+        //m_pQor->quit();
  
     m_pPhysics->logic(t);
 
