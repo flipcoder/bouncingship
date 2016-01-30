@@ -40,6 +40,7 @@ solution("bouncingship")
             "BulletDynamics",
             "BulletCollision",
             "LinearMath",
+            "z"
         }
         files {
             "src/**.h",

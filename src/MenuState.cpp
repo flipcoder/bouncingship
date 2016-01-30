@@ -177,7 +177,6 @@ void MenuState :: enter()
             if(v!=old_v) {
                 m_pResources->config()->meta("audio")->set<int>("volume", v);
                 *m_pVolumeText = string("Global Volume: ") + to_string(v) + "%";
-                Sound::play(m_pRoot.get(), "scroll.wav", m_pResources);
                 return true;
             }
             return false;
@@ -185,7 +184,6 @@ void MenuState :: enter()
     );
     m_OptionsMenu.options().emplace_back(m_pMusicText,
         [this]{
-            //Sound::play(m_pRoot.get(), "scroll.wav", m_pResources);
         },
         [this](int ofs){
             int old_v = m_pResources->config()->meta("audio")->at<int>("music-volume");
@@ -206,7 +204,6 @@ void MenuState :: enter()
             if(v!=old_v) {
                 m_pResources->config()->meta("audio")->set<int>("sound-volume", v);
                 *m_pSoundText = string("Sound Volume: ") + to_string(v) + "%";
-                Sound::play(m_pRoot.get(), "scroll.wav", m_pResources);
                 return true;
             }
             return false;
@@ -352,7 +349,6 @@ void MenuState :: init_controls_menu()
     m_ControlsMenu.options().emplace_back(
         "Back",
         [this]{
-            LOG("back");
             m_pQor->save_settings();
             m_MenuContext.pop();
         },

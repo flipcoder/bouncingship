@@ -96,6 +96,8 @@ class GameState:
         Freq::Alarm m_JumpTimer;
 
         Freq::Timeline m_GameTime;
+
+        std::string m_Map;
 };
 
 #endif

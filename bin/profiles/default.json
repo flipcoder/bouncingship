@@ -1,20 +1,15 @@
 {
-    "name": "Player",
-    "input": {
-        "binds": {
-            "e": [
-                "accelerate",
-                "up"
-            ],
-            "d": [
-                "decelerate",
-                "down"
-            ],
-            "s": "left",
-            "f": "right",
-            "space": [
-                "jump"
-            ]
-        }
-    }
+   "input" : {
+      "binds" : {
+         "d" : ["decelerate","down"],
+         "e" : ["accelerate","up"],
+         "f" : "right",
+         "s" : "left",
+         "space" : ["jump","select"]
+      }
+   },
+   "name" : "Player",
+   "progress" : {
+      "testend" : true
+   }
 }

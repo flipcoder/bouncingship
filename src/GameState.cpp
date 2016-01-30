@@ -23,7 +23,8 @@ GameState :: GameState(
     m_pRoot(make_shared<Node>()),
     m_pOrthoRoot(make_shared<Node>()),
     m_pPipeline(engine->pipeline()),
-    m_JumpTimer(&m_GameTime)
+    m_JumpTimer(&m_GameTime),
+    m_Map(m_pQor->args().value_or("map", "road1"))
 {
     m_ColorShader = m_pPipeline->load_shaders({"color"});
 }
@@ -82,7 +83,7 @@ void GameState :: preload()
     m_pRoot->add(m_pShip);
 
     m_pMap = make_shared<Mesh>(
-        m_pQor->resource_path(m_pQor->args().value_or("map", "road1")+".obj"),
+        m_pQor->resource_path(m_Map+".obj"),
         m_pQor->resources()
     );
 
@@ -158,9 +159,10 @@ void GameState :: logic(Freq::Time t)
     Actuation::logic(t);
     m_GameTime.logic(t);
     
-    if(m_pInput->key(SDLK_ESCAPE))
+    if(m_pInput->key(SDLK_ESCAPE).pressed_now()) {
         m_pQor->change_state("menu");
-        //m_pQor->quit();
+        return;
+    }
  
     m_pPhysics->logic(t);
 
@@ -172,9 +174,9 @@ void GameState :: logic(Freq::Time t)
 
         // raycast front and bottom for crashing and jumping
         auto pos = m_pShip->position();
-        auto hit = m_pPhysics->first_hit(
+        auto jump_hit = m_pPhysics->first_hit(
             pos,
-            pos - m_pShip->box().size().y/2.0f - glm::vec3(0.0f, 0.1f, 0.0f)
+            pos - m_pShip->box().size().y/2.0f - glm::vec3(0.0f, 0.3f, 0.0f)
         );
         auto front_hit = m_pPhysics->first_hit(
             pos,
@@ -190,7 +192,7 @@ void GameState :: logic(Freq::Time t)
             pos - m_pShip->box().size().y/2.0f - glm::vec3(0.0f, 100.0f, 0.0f)
         );
 
-        Node* jump_hit_node = std::get<0>(hit);
+        Node* jump_hit_node = std::get<0>(jump_hit);
         Node* front_hit_node = std::get<0>(front_hit);
         Node* top_hit_node = std::get<0>(top_hit);
         Node* bottom_hit_node = std::get<0>(bottom_hit);
@@ -212,6 +214,11 @@ void GameState :: logic(Freq::Time t)
                 m_pQor->change_state("menu");
             });
             m_sndFinish->play();
+            auto profile = m_pQor->session()->profile(0);
+            auto profcfg = profile->config();
+            auto progress = profcfg->ensure("progress", make_shared<Meta>());
+            progress->set<bool>(m_Map, true);
+            //profile->sync(); // doesn't work yet
             return;
         }
 
