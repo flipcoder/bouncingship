@@ -26,7 +26,7 @@ GameState :: GameState(
     m_JumpTimer(&m_GameTime),
     m_Map(m_pQor->args().value_or("map", "road1"))
 {
-    m_ColorShader = m_pPipeline->load_shaders({"color"});
+    m_Shader = m_pPipeline->load_shaders({"color"});
 }
 
 //GameState :: GameState(
@@ -318,7 +318,7 @@ void GameState :: render() const
         nullptr,
         Pipeline::NO_DEPTH
     );
-    m_pPipeline->override_shader(PassType::NORMAL, m_ColorShader);
+    m_pPipeline->override_shader(PassType::NORMAL, m_Shader);
     m_pPipeline->winding(false);
     m_pPipeline->render(
         m_pRoot.get(),

@@ -80,7 +80,7 @@ void MenuState :: preload()
     m_pMusic = m_pQor->make<Sound>("menu.ogg");
     m_pRoot->add(m_pMusic);
     m_Ambient.on_change.connect([this](const Color& c){
-        int u = m_pPipeline->shader(1)->uniform("Ambient");
+        int u = m_pPipeline->shader(1)->uniform("LightAmbient");
         if(u != -1)
             m_pPipeline->shader(1)->uniform(u, vec4(c.vec3(), c.a()));
     });

@@ -5,10 +5,10 @@ varying vec3 Position;
 varying vec2 Wrap;
 /*varying vec2 Normal;*/
 /*varying vec4 vLightAmbient;*/
-uniform vec4 LightAmbient;
-uniform vec4 MaterialAmbient;
-uniform vec4 MaterialDiffuse;
-uniform vec4 MaterialSpecular;
+uniform vec3 LightAmbient;
+uniform vec3 MaterialAmbient;
+uniform vec3 MaterialDiffuse;
+uniform vec3 MaterialSpecular;
 
 uniform sampler2D Texture;
 
@@ -54,6 +54,6 @@ void main()
     
     /*gl_FragColor = vec4(MaterialDiffuse.rgb, 1.0);*/
     /*gl_FragColor = color;*/
-    gl_FragColor = vec4(mix(MaterialDiffuse, vec4(0.0, 0.0, 0.0, 1.0), abs(Position.z/100.0)).xyz, 1.0);
+    gl_FragColor = vec4(mix(vec4(MaterialDiffuse,1.0), vec4(0.0, 0.0, 0.0, 1.0), abs(Position.z/100.0)).xyz, 1.0);
 }
 

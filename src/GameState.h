@@ -90,7 +90,7 @@ class GameState:
         std::shared_ptr<Sound> m_sndFinish;
 
         std::string m_Filename;
-        unsigned m_ColorShader = 0;
+        unsigned m_Shader = 0;
         bool m_bInAir = false;
 
         Freq::Alarm m_JumpTimer;
