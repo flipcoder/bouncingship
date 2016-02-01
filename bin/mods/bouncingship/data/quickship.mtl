@@ -10,7 +10,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd H:\Work\quickship-texture.png
 
 newmtl burner
 Ns 366.666667
@@ -21,7 +20,6 @@ Ke 1.600000 0.018600 0.012463
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd H:\Work\quickship-texture.png
 
 newmtl cockpitMetal
 Ns 96.078431
@@ -32,7 +30,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd H:\Work\quickship-texture.png
 
 newmtl glass
 Ns 27.450980
@@ -43,7 +40,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 3
-map_Kd H:\Work\quickship-texture.png
 
 newmtl white
 Ns 5.882353
@@ -54,4 +50,3 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd H:\Work\quickship-texture.png
