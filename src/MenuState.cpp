@@ -50,7 +50,7 @@ void MenuState :: preload()
     m_pCamera->listen(true);
     
     //try{
-    //    m_pScene = m_pResources->cache_as<Scene>("menu.json");
+    //    m_pScene = m_pResources->cache_cast<Scene>("menu.json");
     //}catch(const std::exception& e){
     //    ERRORf(GENERAL, "scene problem: %s", e.what());
     //}
@@ -58,7 +58,7 @@ void MenuState :: preload()
     
     auto win = m_pQor->window();
 
-    auto tex = m_pResources->cache_as<Texture>("title.png");
+    auto tex = m_pResources->cache_cast<Texture>("title.png");
     auto logo = make_shared<Mesh>(
         make_shared<MeshGeometry>(
             Prefab::quad(

@@ -68,7 +68,7 @@ void GameState :: preload()
         vec2(1.0f, -1.0f)
     )));
     bg->material(make_shared<MeshMaterial>(
-        m_pQor->resources()->cache_as<ITexture>(
+        m_pQor->resources()->cache_cast<ITexture>(
             "sky4.png"
         )
     ));
