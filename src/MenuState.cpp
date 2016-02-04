@@ -36,9 +36,9 @@ MenuState :: MenuState(
         m_pCanvas.get(),
         m_pResources,
         "Good Times",
-        engine->window()->size().y / 30.0f,
+        engine->window()->size().y / 24.0f,
         &m_Fade,
-        6
+        5
     ))
 {
 }
@@ -58,17 +58,19 @@ void MenuState :: preload()
     
     auto win = m_pQor->window();
 
+    auto tex = m_pResources->cache_as<Texture>("title.png");
     auto logo = make_shared<Mesh>(
         make_shared<MeshGeometry>(
             Prefab::quad(
-                -vec2(win->size().y, win->size().y)/4.0f,
-                vec2(win->size().y/4.0f, win->size().y/32.0f)
+                -vec2((float)tex->center().x, (float)tex->center().y) / ((win->size().x*1.0f)/1024.0f),
+                vec2((float)tex->center().x, (float)tex->center().y) / ((win->size().x*1.0f)/1024.0f)
+                //-vec2(win->size().y, win->size().y)/4.0f,
+                //vec2(win->size().y/4.0f, win->size().y/64.0f)
             )
         ));
     logo->add_modifier(make_shared<Wrap>(Prefab::quad_wrap(
         glm::vec2(0.0f, 1.0f), glm::vec2(1.0f, 0.0f)
     )));
-    auto tex = m_pResources->cache_as<ITexture>("title.png");
     logo->material(make_shared<MeshMaterial>(tex));
     logo->move(vec3(
         win->center().x,
@@ -90,6 +92,7 @@ void MenuState :: enter()
 {
     m_pCamera->ortho();
     m_pPipeline->winding(true);
+    m_pPipeline->blend(true);
     m_pPipeline->bg_color(Color::black());
     
     m_pInput->relative_mouse(false);
@@ -109,9 +112,11 @@ void MenuState :: enter()
     auto bg = make_shared<Mesh>(
         make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh))),
         vector<shared_ptr<IMeshModifier>>{
-            make_shared<Wrap>(Prefab::quad_wrap())
+            make_shared<Wrap>(Prefab::quad_wrap(
+                glm::vec2(-1.0f, 1.0f)
+            ))
         },
-        make_shared<MeshMaterial>("sky3.png", m_pResources)
+        make_shared<MeshMaterial>("sky5.png", m_pResources)
     );
     bg->position(vec3(0.0f,0.0f,-1.0f));
     m_pRoot->add(bg);

@@ -5,8 +5,8 @@ varying vec3 Position;
 varying vec2 Wrap;
 /*varying vec2 Normal;*/
 /*varying vec4 vLightAmbient;*/
-uniform vec3 LightAmbient;
-uniform vec3 MaterialAmbient;
+uniform vec3 Brightness;
+/*uniform vec3 MaterialAmbient;*/
 uniform vec3 MaterialDiffuse;
 uniform vec3 MaterialSpecular;
 

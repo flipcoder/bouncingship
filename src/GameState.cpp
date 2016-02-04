@@ -44,8 +44,8 @@ void GameState :: preload()
     m_pCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
     m_pCamera->fov(100);
     m_pOrthoCamera = make_shared<Camera>(m_pQor->resources(), m_pQor->window());
-    m_pRoot->add(m_pCamera->as_node());
-    m_pOrthoRoot->add(m_pOrthoCamera->as_node());
+    m_pRoot->add(m_pCamera);
+    m_pOrthoRoot->add(m_pOrthoCamera);
     
     m_pMusic = m_pQor->make<Sound>("2.ogg");
     m_pRoot->add(m_pMusic);
@@ -59,15 +59,17 @@ void GameState :: preload()
     auto bg = make_shared<Mesh>(
         make_shared<MeshGeometry>(
             Prefab::quad(
-                -vec2(win->size().y, win->size().y),
-                vec2(win->size().y, win->size().y)
+                -vec2(win->center().x, win->center().y),
+                vec2(win->center().x, win->center().y)
             )
         )
     );
-    bg->add_modifier(make_shared<Wrap>(Prefab::quad_wrap()));
+    bg->add_modifier(make_shared<Wrap>(Prefab::quad_wrap(
+        vec2(1.0f, -1.0f)
+    )));
     bg->material(make_shared<MeshMaterial>(
         m_pQor->resources()->cache_as<ITexture>(
-            "sky3.png"
+            "sky4.png"
         )
     ));
     bg->position(glm::vec3(win->center().x, win->center().y, 0.0f));
@@ -318,7 +320,7 @@ void GameState :: render() const
         nullptr,
         Pipeline::NO_DEPTH
     );
-    m_pPipeline->override_shader(PassType::NORMAL, m_Shader);
+    m_pPipeline->override_shader(PassType::NORMAL, (unsigned)PassType::NONE);
     m_pPipeline->winding(false);
     m_pPipeline->render(
         m_pRoot.get(),
@@ -326,6 +328,5 @@ void GameState :: render() const
         nullptr,
         Pipeline::NO_CLEAR
     );
-    m_pPipeline->override_shader(PassType::NORMAL, (unsigned)PassType::NONE);
 }
 

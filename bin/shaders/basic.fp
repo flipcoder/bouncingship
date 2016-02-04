@@ -6,7 +6,7 @@ varying vec2 Wrap;
 /*varying vec2 Normal;*/
 
 uniform sampler2D Texture;
-uniform vec4 LightAmbient;
+uniform vec3 Brightness;
 
 void main()
 {
@@ -22,7 +22,7 @@ void main()
     /*    discard;*/
     /*}*/
     
-    gl_FragColor = color;
+    gl_FragColor = color * vec4(Brightness, 1.0);
     /*gl_FragColor = color;*/
 }
 
