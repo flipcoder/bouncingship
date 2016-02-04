@@ -313,6 +313,7 @@ void GameState :: reset()
 
 void GameState :: render() const
 {
+    m_pPipeline->override_shader(PassType::NORMAL, (unsigned)PassType::NONE);
     m_pPipeline->winding(true);
     m_pPipeline->render(
         m_pOrthoRoot.get(),
@@ -320,7 +321,7 @@ void GameState :: render() const
         nullptr,
         Pipeline::NO_DEPTH
     );
-    m_pPipeline->override_shader(PassType::NORMAL, (unsigned)PassType::NONE);
+    m_pPipeline->override_shader(PassType::NORMAL, m_Shader);
     m_pPipeline->winding(false);
     m_pPipeline->render(
         m_pRoot.get(),
