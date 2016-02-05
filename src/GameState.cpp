@@ -329,5 +329,6 @@ void GameState :: render() const
         nullptr,
         Pipeline::NO_CLEAR
     );
+    m_pPipeline->override_shader(PassType::NORMAL, (unsigned)PassType::NONE);
 }
 
