@@ -171,9 +171,7 @@ void GameState :: logic(Freq::Time t)
 
     if(m_pShip)
     {
-    
-        btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
-        glm::vec3 v = Physics::fromBulletVector(ship_body->getLinearVelocity());
+        vec3 v = m_pShip->velocity();
 
         // raycast front and bottom for crashing and jumping
         auto pos = m_pShip->position();
@@ -286,7 +284,7 @@ void GameState :: logic(Freq::Time t)
             m_JumpTimer.reset();
         }
         
-        ship_body->setLinearVelocity(Physics::toBulletVector(v));
+        m_pShip->velocity(v);
         //m_pCamera->fov(60.0f + 30.0f * std::min(1.0f, std::max(0.0f, std::abs(v.z/15.0f))));
         
         if(m_pShip->position().y < m_pMap->box().min().y)
@@ -303,13 +301,8 @@ void GameState :: logic(Freq::Time t)
 
 void GameState :: reset()
 {
-    btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     m_pShip->position(glm::vec3(0.0f, 10.0f, 0.0f));
-    glm::mat4 mat = *m_pShip->matrix_c();
-    ship_body->setWorldTransform(Physics::toBulletTransform(mat));
-    ship_body->setLinearVelocity(
-        Physics::toBulletVector(glm::vec3(0.0f, 0.0f, 0.0f))
-    );
+    m_pShip->velocity(vec3(0.0f));
 }
 
 void GameState :: render() const
