@@ -110,7 +110,9 @@ void MenuState :: enter()
     m_pRoot->add(m_pCanvas);
     
     auto bg = make_shared<Mesh>(
-        make_shared<MeshGeometry>(Prefab::quad(vec2(sw, sh))),
+        make_shared<MeshGeometry>(Prefab::quad(
+            vec2(sw, sh), vec2(0.0f, 0.0f)
+        )),
         vector<shared_ptr<IMeshModifier>>{
             make_shared<Wrap>(Prefab::quad_wrap(
                 glm::vec2(-1.0f, 1.0f)
