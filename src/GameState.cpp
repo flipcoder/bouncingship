@@ -69,7 +69,7 @@ void GameState :: preload()
     )));
     bg->material(make_shared<MeshMaterial>(
         m_pQor->resources()->cache_cast<ITexture>(
-            "sky4.png"
+            "sky5.png"
         )
     ));
     bg->position(glm::vec3(win->center().x, win->center().y, 0.0f));
