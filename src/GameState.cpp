@@ -91,7 +91,7 @@ void GameState :: preload()
     );
 
     m_pRoot->add(m_pMap);
-    
+
     m_pPhysics->generate(m_pRoot.get(), (unsigned)Physics::GenerateFlag::RECURSIVE);
 
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
