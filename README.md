@@ -7,9 +7,14 @@ Copyright &copy; 2016 Grady O'Connell
 
 =====
 
+## Videos ##
+
+[![Video 1](http://img.youtube.com/vi/vni52_CKeUg/0.jpg)](https://www.youtube.com/watch?v=vni52_CKeUg) 
+
 ## Screenshots ##
 
 ![screenshot](https://raw.githubusercontent.com/flipcoder/bouncingship/master/screenshots/screen2.png)
+
 
 ## Credits ##
 
