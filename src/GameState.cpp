@@ -223,12 +223,12 @@ void GameState :: logic(Freq::Time t)
             return;
         }
 
-        assert(jump_hit_node != m_pShip.get());
-        assert(front_hit_node != m_pShip.get());
-        //if(hit_node == m_pShip.get())
-        //    hit_node = nullptr;
-        //if(front_hit_node == m_pShip.get())
-        //    front_hit_node = nullptr;
+        //assert(jump_hit_node != m_pShip.get());
+        //assert(front_hit_node != m_pShip.get());
+        if(jump_hit_node == m_pShip.get())
+            jump_hit_node = nullptr;
+        if(front_hit_node == m_pShip.get())
+            front_hit_node = nullptr;
         glm::vec3 front_hit_normal = std::get<2>(front_hit);
         
         // ship crashing

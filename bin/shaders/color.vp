@@ -5,7 +5,6 @@ attribute vec2 VertexWrap;
 
 varying vec3 Position;
 varying vec2 Wrap;
-varying vec3 ScreenPos;
 
 uniform mat4 ModelViewProjection;
 uniform mat4 ModelView;

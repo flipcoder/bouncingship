@@ -336,7 +336,7 @@ void MenuState :: init_controls_menu()
                     auto gui = m_pMenuGUI;
                     auto guitext = m_pText;
                     m_pInput->listen(Input::LISTEN_KEY, m_pText,
-                        [this, profile,text,action,gui,guitext](bool done){
+                        [this, profile,text,action,gui,guitext](bool done, bool success){
                             *text = action + ": " + *guitext;
                             m_Binds[action] = std::vector<std::string>({
                                 *guitext
