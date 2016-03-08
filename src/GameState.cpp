@@ -177,7 +177,7 @@ void GameState :: logic(Freq::Time t)
         auto pos = m_pShip->position();
         auto jump_hit = m_pPhysics->first_hit(
             pos,
-            pos - m_pShip->box().size().y/2.0f - glm::vec3(0.0f, 0.3f, 0.0f)
+            pos - m_pShip->box().size().y/2.0f - glm::vec3(0.0f, 1.0f, 0.0f)
         );
         auto front_hit = m_pPhysics->first_hit(
             pos,

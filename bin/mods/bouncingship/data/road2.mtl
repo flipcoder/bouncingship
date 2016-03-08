@@ -20,7 +20,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd road2-ssao.png
 
 newmtl ORANGE
 Ns 96.078431
@@ -31,7 +30,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd road2-ssao.png
 
 newmtl PURPLE
 Ns 96.078431
@@ -42,7 +40,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd road2-ssao.png
 
 newmtl RED
 Ns 96.078431
@@ -53,7 +50,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd road2-ssao.png
 
 newmtl TEAL
 Ns 96.078431
@@ -74,7 +70,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 0
-map_Kd road2-ssao.png
 
 newmtl WHITE_NONE
 Ns 96.078431
