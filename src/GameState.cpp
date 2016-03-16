@@ -92,7 +92,7 @@ void GameState :: preload()
 
     m_pRoot->add(m_pMap);
 
-    m_pPhysics->generate(m_pRoot.get(), (unsigned)Physics::GenerateFlag::RECURSIVE);
+    m_pPhysics->generate(m_pRoot.get(), Physics::GEN_RECURSIVE);
 
     btRigidBody* ship_body = (btRigidBody*)m_pShip->body()->body();
     ship_body->setFriction(0.0);
