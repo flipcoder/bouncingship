@@ -89,6 +89,7 @@ void GameState :: preload()
         m_pQor->resource_path(m_Map+".obj"),
         m_pQor->resources()
     );
+    m_pMap->set_physics(Node::STATIC);
 
     m_pRoot->add(m_pMap);
 
