@@ -50,9 +50,8 @@ solution("bouncingship")
         excludes {
             "src/Qor/Main.cpp",
             "src/Qor/Info.cpp",
-
-                "src/Qor/DemoState.*",
-            
+            "src/Qor/Net.*",
+            "src/Qor/DemoState.*",
             "src/Qor/tests/**",
             "src/Qor/scripts/**",
             "src/Qor/addons/**",
