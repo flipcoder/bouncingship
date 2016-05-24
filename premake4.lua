@@ -23,8 +23,7 @@ solution("bouncingship")
             "SDL2",
             "GLEW",
             --"assimp",
-            "IL",
-            "ILU",
+            "freeimage",
             "openal",
             "alut",
             "ogg",
@@ -41,7 +40,8 @@ solution("bouncingship")
             "BulletDynamics",
             "BulletCollision",
             "LinearMath",
-            "z"
+            "z",
+            "assimp"
         }
         files {
             "src/**.h",

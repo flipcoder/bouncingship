@@ -8,7 +8,7 @@ varying vec2 Wrap;
 
 uniform mat4 ModelViewProjection;
 uniform mat4 ModelView;
-uniform mat4 NormalMatrix;
+uniform mat3 NormalMatrix;
 
 void main()
 {

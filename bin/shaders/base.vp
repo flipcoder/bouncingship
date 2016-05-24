@@ -2,9 +2,14 @@
 
 attribute vec3 VertexPosition;
 attribute vec2 VertexWrap;
+/*attribute float VertexFade;*/
+/*attribute vec3 VertexNormal;*/
 
 varying vec3 Position;
 varying vec2 Wrap;
+varying float Depth;
+/*varying float Fade;*/
+/*varying vec3 Normal;*/
 
 uniform mat4 ModelViewProjection;
 /*uniform mat4 ModelView;*/
@@ -14,6 +19,9 @@ void main()
 {
     Position = VertexPosition;
     Wrap = VertexWrap;
+    /*Fade = VertexFade;*/
+    /*Normal = mat3(NormalMatrix) * VertexNormal;*/
     gl_Position = ModelViewProjection * vec4(VertexPosition, 1.0);
+    Depth = gl_Position.z;
 }
 

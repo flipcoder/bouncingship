@@ -272,17 +272,20 @@ void GameState :: logic(Freq::Time t)
         {
             if(jump_hit_node)
             {
+                LOGf("hit %s", t.ms());
                 m_pShip->add(m_sndJump);
                 m_sndJump->play();
-                m_JumpTimer.set(Freq::Time(150));
+                m_JumpTimer.set(Freq::Time::ms(150));
                 v.y = 15.0f;
             }
             else if(not m_JumpTimer.elapsed())
             {
+                LOGf("timer %s", t.ms());
                 v.y = 15.0f;
             }
         } else {
-            m_JumpTimer.reset();
+            if(jump_hit_node)
+                m_JumpTimer.reset();
         }
         
         m_pShip->velocity(v);
